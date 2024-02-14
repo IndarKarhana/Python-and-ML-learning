@@ -39,3 +39,50 @@ sm_data = sm_data.withColumn("key", F.concat_ws("_", F.col("index"), F.col("Serv
 
 # Show the result
 sm_data.show()
+
+
+*------*
+def detect_outliers_z_score(data: DataFrame, t: float):
+    outlier_indices = []
+    extreme_indices = []
+    threshold = t
+    
+    # Calculate mean and standard deviation
+    mean = data.agg(F.mean("usg")).collect()[0][0]
+    std = data.agg(F.stddev("usg")).collect()[0][0]
+    
+    # Calculate Z-score for each row
+    z_scores = data.withColumn("Z_score", (F.col("usg") - mean) / std)
+    
+    # Filter rows based on Z-score and value of 'usg'
+    outliers = z_scores.filter((F.abs(F.col("Z_score")) > threshold) | (F.col("usg") < 0))
+    outliers = outliers.select("key").rdd.flatMap(lambda x: x).collect()
+    
+    # Filter extreme outliers
+    extreme_outliers = outliers.filter(lambda x: (data.filter(data["key"] == x).select((F.col("usg") + 1) / mean > 10)).collect()[0][0])
+    
+    return outliers, extreme_outliers
+
+
+def detect_outliers_iqr(data: DataFrame, lower_percentile=10, upper_percentile=90, multiplier=1.5):
+    outlier_indices = []
+    extreme_indices = []
+    
+    # Calculate quartiles and IQR
+    quartiles = data.approxQuantile("usg", [lower_percentile / 100, upper_percentile / 100], 0.01)
+    q1 = quartiles[0]
+    q3 = quartiles[1]
+    iqr = q3 - q1
+    
+    # Calculate bounds
+    lower_bound = q1 - multiplier * iqr
+    upper_bound = q3 + multiplier * iqr
+    
+    # Filter outliers based on bounds and 'usg' value
+    outliers = data.filter((F.col("usg") < lower_bound) | (F.col("usg") > upper_bound) | (F.col("usg") < 0))
+    outliers = outliers.select("key").rdd.flatMap(lambda x: x).collect()
+    
+    # Filter extreme outliers
+    extreme_outliers = outliers.filter(lambda x: (data.filter(data["key"] == x).select((F.col("usg") / F.mean(data["usg"])) > 10)).collect()[0][0])
+    
+    return outliers, extreme_outliers
