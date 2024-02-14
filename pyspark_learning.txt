@@ -83,9 +83,12 @@ def detect_outliers_iqr(data: DataFrame, lower_percentile=10, upper_percentile=9
     
     # Filter outliers based on bounds and 'usg' value
     outliers = data.filter((F.col("usg") < lower_bound) | (F.col("usg") > upper_bound) | (F.col("usg") < 0))
-    outliers = outliers.select("key").rdd.flatMap(lambda x: x).collect()
+    outliers_list = outliers.select("key").rdd.flatMap(lambda x: x).collect()
     
-    # Filter extreme outliers
-    extreme_outliers = outliers.filter(lambda x: (data.filter(data["key"] == x).select((F.col("usg") / F.mean(data["usg"])) > 10)).collect()[0][0])
+    # Identify extreme outliers
+    for key in outliers_list:
+        if data.filter(data["key"] == key).select((F.col("usg") / F.mean(data["usg"])) > 10).collect()[0][0]:
+            extreme_indices.append(key)
     
-    return outliers, extreme_outliers
+    return outliers_list, extreme_indices
+
