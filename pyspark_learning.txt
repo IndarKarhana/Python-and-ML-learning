@@ -92,3 +92,51 @@ def detect_outliers_iqr(data: DataFrame, lower_percentile=10, upper_percentile=9
     
     return outliers_list, extreme_indices
 
+*----------*
+from pyspark.sql import functions as F
+from pyspark.sql import DataFrame
+
+def flatten(xss):
+    return [x for xs in xss for x in xs]
+
+def detector_z(data: DataFrame, t=1.5):
+    outlier_indices_to_flag = []
+    extreme_indices_to_flag = []
+    data_ = data.dropna()
+    uniq_SPid = data_.select("Service Point Id").distinct().rdd.flatMap(lambda x: x).collect()
+    
+    for id in uniq_SPid:
+        data_t = data_.filter(data_["Service Point Id"] == id)
+        outlier_indices_values, extreme_indices_values = detect_outliers_z_score(data_t, t)
+        outlier_indices_to_flag.append(outlier_indices_values)
+        extreme_indices_to_flag.append(extreme_indices_values)
+    
+    outlier_indices = flatten(outlier_indices_to_flag)
+    extreme_indices = flatten(extreme_indices_to_flag)
+    
+    data_ = data_.withColumn("outlier_", F.col("key").isin(outlier_indices).cast("string").replace(['true', 'false'], ['T', 'F']))
+    data_ = data_.withColumn("extreme_", F.col("key").isin(extreme_indices).cast("string").replace(['true', 'false'], ['T', 'F']))
+    
+    return data_
+
+def detector_iqr(data: DataFrame, lower_percentile=10, upper_percentile=90, multiplier=1.5):
+    outlier_indices_to_flag = []
+    extreme_indices_to_flag = []
+    data_ = data.dropna()
+    uniq_SPid = data_.select("Service Point Id").distinct().rdd.flatMap(lambda x: x).collect()
+    
+    for id in uniq_SPid:
+        data_t = data_.filter(data_["Service Point Id"] == id)
+        outlier_indices_values, extreme_indices_values = detect_outliers_iqr(data_t, lower_percentile, upper_percentile, multiplier)
+        outlier_indices_to_flag.append(outlier_indices_values)
+        extreme_indices_to_flag.append(extreme_indices_values)
+    
+    outlier_indices = flatten(outlier_indices_to_flag)
+    extreme_indices = flatten(extreme_indices_to_flag)
+    
+    data_ = data_.withColumn("outlier_", F.col("key").isin(outlier_indices).cast("string").replace(['true', 'false'], ['T', 'F']))
+    data_ = data_.withColumn("extreme_", F.col("key").isin(extreme_indices).cast("string").replace(['true', 'false'], ['T', 'F']))
+    
+    return data_
+
+
