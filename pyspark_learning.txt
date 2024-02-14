@@ -139,4 +139,77 @@ def detector_iqr(data: DataFrame, lower_percentile=10, upper_percentile=90, mult
     
     return data_
 
+**-----------------**
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col
+import numpy as np
+
+# Create a SparkSession
+spark = SparkSession.builder \
+    .appName("Hypertuning") \
+    .getOrCreate()
+
+# Define t values
+t_vals = np.arange(1, 0, -0.1)
+flag = 0
+val_t = 0
+val_f = 0
+t_value = []
+false_negatives = []
+true_negatives = []
+false_positives = []
+true_positives = []
+positives = []
+negatives = []
+
+# Hypertuning loop
+for t in t_vals:
+    data_ = detector_z(sm_data, t)
+    data_ = data_.withColumn("usage date", F.col("usage date").cast("string"))
+    data_ = data_.withColumn("Service Point Id", F.col("Service Point Id").cast("long"))
+    data3 = mi_data.join(data_, ["Service Point Id", "usage date"], "left")
+
+    t_value.append(t)
+
+    p_p = data3.filter(col("outlier") == "T").count()
+    t_p = data3.filter((col("outlier") == col("outlier_")) & (col("outlier") == "T")).count()
+    f_p = data3.filter((col("outlier") != col("outlier_")) & (col("outlier") == "F")).count()
+    n_n = data3.filter(col("outlier") == "F").count()
+    t_n = n_n - f_p
+    f_n = p_p - t_p
+
+    positives.append(p_p)
+    true_positives.append(t_p)
+    false_positives.append(f_p)
+    negatives.append(n_n)
+    true_negatives.append(t_n)
+    false_negatives.append(f_n)
+
+    if (f_p == val_f) & (t_p == val_t):
+        flag += 1
+    else:
+        val_f = f_p
+        val_t = t_p
+        flag = 0
+
+    if flag == 3:
+        break
+
+# Create DataFrame for hypertuned data
+hypertuned_data = {"method": ["z_score"] * len(t_value),
+                   "t_value": t_value,
+                   "positives": positives,
+                   "true positives": true_positives,
+                   "false_negatives": false_negatives,
+                   "negatives": negatives,
+                   "true_negatives": true_negatives,
+                   "false_positives": false_positives}
+hypertuned_df = spark.createDataFrame(pd.DataFrame(hypertuned_data))
+
+# Write DataFrame to CSV
+file_name = "hypertuned_data_z_score.csv"
+hypertuned_df.write.csv(file_name, mode="overwrite", header=True)
+
+# Show the DataFrame
+hypertuned_df.show()
 
