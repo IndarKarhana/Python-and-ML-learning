@@ -1,92 +1,87 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torch.nn.init as init
+from torch.nn import init
+from torch.utils.data import DataLoader, TensorDataset
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
 
-# Check if CUDA is available
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print(f'Using device: {device}')
-
-import torch.nn.parallel
-import torch.distributed as dist
-
-# Upsample using SMOTE
-smote = SMOTE()
-X_resampled, y_resampled = smote.fit_resample(X, y)
+# Generate synthetic dataset
+np.random.seed(42)
+X = np.random.rand(1000, 10)  # 1000 samples, 10 features
+y = 2 * X[:, 0] + 3 * X[:, 1] - 1.5 * X[:, 2] + np.random.randn(1000)
 
 # Normalize the features
 scaler = StandardScaler()
-X_resampled = scaler.fit_transform(X_resampled)
+X = scaler.fit_transform(X)
 
 # Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Convert data to PyTorch tensors
-y_train = y_train.to_numpy()
-y_test = y_test.to_numpy()
-# Move data to CUDA device if available
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print(device)
-X_train_tensor = torch.tensor(X_train).to(device)
-y_train_tensor = torch.tensor(y_train).to(device)
-X_test_tensor = torch.tensor(X_test).to(device)
-y_test_tensor = torch.tensor(y_test).to(device)
+X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
+X_test_tensor = torch.tensor(X_test, dtype=torch.float32)
+y_train_tensor = torch.tensor(y_train, dtype=torch.float32)
+y_test_tensor = torch.tensor(y_test, dtype=torch.float32)
 
 # Define the architecture of the neural network
 class NeuralNet(nn.Module):
-    def __init__(self, input_size, hidden_size, num_classes):
+    def __init__(self, input_size, hidden_size, output_size):
         super(NeuralNet, self).__init__()
         self.fc1 = nn.Linear(input_size, hidden_size)
-        self.fc2 = nn.Linear(hidden_size, hidden_size)
-        self.fc3 = nn.Linear(hidden_size, hidden_size)
-        self.fc4 = nn.Linear(hidden_size, hidden_size)
-        self.fc5 = nn.Linear(hidden_size, hidden_size)
-        self.fc6 = nn.Linear(hidden_size, hidden_size)
-        self.fc7 = nn.Linear(hidden_size, hidden_size)
-        self.fc8 = nn.Linear(hidden_size, num_classes)
-        
-        for layer in [self.fc1, self.fc2, self.fc3, self.fc4, self.fc5, self.fc6, self.fc7, self.fc8]:
-            init.xavier_uniform_(layer.weight)
+        self.fc2 = nn.Linear(hidden_size, output_size)
+        init.xavier_uniform_(self.fc1.weight)
+        init.xavier_uniform_(self.fc2.weight)
 
     def forward(self, x):
-        x = x.to(self.fc1.weight.dtype)
-        out = torch.relu(self.fc1(x))
-        out = torch.relu(self.fc2(out))
-        out = torch.relu(self.fc3(out))
-        out = torch.relu(self.fc4(out))
-        out = torch.relu(self.fc5(out))
-        out = torch.relu(self.fc6(out))
-        out = torch.relu(self.fc7(out))
-        out = self.fc8(out)
-        return out
+        x = torch.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
 
-# Move model to CUDA device if available
+# Define device
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# Move data to device
+X_train_tensor = X_train_tensor.to(device)
+y_train_tensor = y_train_tensor.to(device)
+X_test_tensor = X_test_tensor.to(device)
+y_test_tensor = y_test_tensor.to(device)
+
+# Define model
 input_size = X_train.shape[1]
-num_parameters = input_size
-hidden_size = 2 * num_parameters + 2
-model = NeuralNet(input_size=input_size, hidden_size=hidden_size, num_classes=1).to(device)
+output_size = 1
+hidden_size = 2 * input_size + 2
+model = NeuralNet(input_size=input_size, hidden_size=hidden_size, output_size=output_size)
 
+# If multiple GPUs are available, wrap the model with DataParallel
 if torch.cuda.device_count() > 1:
     print("Using", torch.cuda.device_count(), "GPUs!")
     model = nn.DataParallel(model)
 
+# Move model to device
+model = model.to(device)
+
 # Define loss function and optimizer
-criterion = nn.BCEWithLogitsLoss()  # Binary cross-entropy loss
+criterion = nn.MSELoss()  # Mean Squared Error loss for regression
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # Train the model
 num_epochs = 50
-batch_size = 20
+batch_size = 32
+train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+
 for epoch in range(num_epochs):
-    for i in range(0, len(X_train_tensor), batch_size):
-        inputs = X_train_tensor[i:i+batch_size]
-        targets = y_train_tensor[i:i+batch_size]
+    for i, (inputs, targets) in enumerate(train_loader):
+        inputs, targets = inputs.to(device), targets.to(device)
 
         # Forward pass
         outputs = model(inputs)
 
         # Compute loss
-        loss = criterion(outputs, targets.view(-1, 1).float())  # Convert targets to float and reshape
+        loss = criterion(outputs, targets.view(-1, 1))  # No need to cast targets to float and reshape
 
         # Backward and optimize
         optimizer.zero_grad()
@@ -96,19 +91,9 @@ for epoch in range(num_epochs):
     print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
 
 # Evaluate the model
+model.eval()
 with torch.no_grad():
     outputs = model(X_test_tensor)
-    predictions = torch.round(torch.sigmoid(outputs))  # Apply sigmoid and round to get predictions
+    rmse = torch.sqrt(torch.mean((outputs - y_test_tensor.view(-1, 1))**2))
     
-    # Convert tensors to numpy arrays
-    y_test_np = y_test_tensor.cpu().numpy()  # Move tensor back to CPU for numpy operations
-    predicted_np = predictions.cpu().numpy()  # Move tensor back to CPU for numpy operations
-    
-    # Calculate precision, recall, and F1 score
-    precision = precision_score(y_test_np, predicted_np)
-    recall = recall_score(y_test_np, predicted_np)
-    f1 = f1_score(y_test_np, predicted_np)
-    
-    print(f'Test Precision: {precision:.4f}')
-    print(f'Test Recall: {recall:.4f}')
-    print(f'Test F1 Score: {f1:.4f}')
+    print(f'Test RMSE: {rmse.item():.4f}')
