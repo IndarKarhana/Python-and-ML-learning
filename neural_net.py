@@ -3,23 +3,39 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
 from torch.utils.data import TensorDataset, DataLoader
 import time
 
-# Check if GPU is available
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# Function to check if multiple GPUs are available
+def get_device():
+    if torch.cuda.is_available():
+        if torch.cuda.device_count() > 1:
+            print(f'Using {torch.cuda.device_count()} GPUs')
+            return torch.device("cuda:0")  # Change to "cuda" for automatic device selection
+        else:
+            return torch.device("cuda")
+    else:
+        return torch.device("cpu")
+
+# Check device
+device = get_device()
 print("Using device:", device)
 
 # Generate or load your dataset (assuming you have it as numpy arrays x and y)
 
-# Split the dataset into training and testing sets
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+# Apply Min-Max scaling to input data
+scaler = MinMaxScaler()
+x_scaled = scaler.fit_transform(x)
 
-# Convert numpy arrays to PyTorch tensors and move them to GPU
-x_train_tensor = torch.from_numpy(x_train).to(device)
-y_train_tensor = torch.from_numpy(y_train).to(device)
-x_test_tensor = torch.from_numpy(x_test).to(device)
-y_test_tensor = torch.from_numpy(y_test).to(device)
+# Split the scaled dataset into training and testing sets
+x_train, x_test, y_train, y_test = train_test_split(x_scaled, y, test_size=0.2, random_state=42)
+
+# Convert numpy arrays to PyTorch tensors
+x_train_tensor = torch.from_numpy(x_train).float()
+y_train_tensor = torch.from_numpy(y_train).float()
+x_test_tensor = torch.from_numpy(x_test).float()
+y_test_tensor = torch.from_numpy(y_test).float()
 
 # Create TensorDatasets
 train_dataset = TensorDataset(x_train_tensor, y_train_tensor)
@@ -29,17 +45,25 @@ test_dataset = TensorDataset(x_test_tensor, y_test_tensor)
 train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=128)
 
-# Define the linear regression model and move it to GPU
+# Define the linear regression model
 class LinearRegression(nn.Module):
     def __init__(self):
         super(LinearRegression, self).__init__()
-        self.linear = nn.Linear(1, 1).to(device)  # 1 input feature, 1 output feature (1D to 1D)
+        self.linear = nn.Linear(1, 1)
 
     def forward(self, x):
         return self.linear(x)
 
 # Instantiate the model
-model = LinearRegression().to(device)
+model = LinearRegression()
+
+# Use DataParallel for multiple GPUs
+if torch.cuda.device_count() > 1:
+    print(f'Using {torch.cuda.device_count()} GPUs for data parallelism')
+    model = nn.DataParallel(model)
+
+# Move the model to GPU(s)
+model.to(device)
 
 # Define loss function and optimizer
 criterion = nn.MSELoss()  # Mean Squared Error loss
@@ -83,6 +107,6 @@ with torch.no_grad():
     print(f'Validation Loss: {running_val_loss / len(test_loader.dataset):.4f}')
 
 # Test the model
-x_new = torch.tensor([[6.0]]).to(device)
+x_new = torch.tensor([[6.0]]).float().to(device)
 predicted = model(x_new)
 print(f'Prediction after training: {predicted.item():.4f}')
