@@ -52,7 +52,7 @@ def preprocess_data_and_split(X, y, test_size=0.2, random_state=42):
     return X_train_tensor, X_test_tensor, y_train_tensor, y_test_tensor, sp_id_train_tensor, sp_id_test_tensor
 
 # Function to evaluate the model on the test set and calculate R-squared score
-def evaluate_model(model, test_loader):
+def evaluate_model(model, test_loader, criterion, device):
     model.eval()
     with torch.no_grad():
         total_loss = 0
@@ -131,26 +131,19 @@ def main(X, y, hidden_size, embedding_size, num_epochs, batch_size, test_size=0.
     test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
     # Evaluate the model
-    mse, r2 = evaluate_model(model, test_loader)
+    mse, r2 = evaluate_model(model, test_loader, criterion, device)
     print(f'Test MSE: {mse:.4f}, Test R-squared: {r2:.4f}')
 
-# Example usage
-# Load your data
-# X = pd.read_csv("your_data.csv")
-# y = X['target_column']
-# X.drop(columns=['target_column'], inplace=True)
+# Sample data
+data = {
+    'feature1': np.random.rand(1000),
+    'feature2': np.random.rand(1000),
+    'sp_id': np.random.randint(1, 101, 1000),  # Assuming 100 unique SP IDs
+}
+X = pd.DataFrame(data)
+y = pd.Series(np.random.rand(1000))
 
-# Example data generation (remove this if you have your own data)
-num_rows = 500000
-num_features = 10
-num_unique_sp_ids = 100
-X = pd.DataFrame({
-    'sp_id': np.random.randint(0, num_unique_sp_ids, num_rows),
-    **{f'feature_{i}': np.random.randn(num_rows) for i in range(num_features)}
-})
-y = pd.Series(np.random.randn(num_rows))
-
-# Set hyperparameters
+# Hyperparameters
 hidden_size = 64
 embedding_size = 10
 num_epochs = 10
