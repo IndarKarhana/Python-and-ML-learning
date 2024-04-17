@@ -1,3 +1,29 @@
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.nn import init
+from torch.utils.data import DataLoader, TensorDataset
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Define the architecture of the neural network with user-specific embeddings
+class NeuralNetWithUserEmbeddings(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size, num_users, embedding_size):
+        super(NeuralNetWithUserEmbeddings, self).__init__()
+        self.user_embedding = nn.Embedding(num_users, embedding_size)
+        self.fc1 = nn.Linear(input_size + embedding_size, hidden_size)
+        self.fc2 = nn.Linear(hidden_size, output_size)
+
+    def forward(self, x, user_ids):
+        user_emb = self.user_embedding(user_ids)
+        x = torch.cat([x, user_emb], dim=1)
+        x = torch.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+
 # Function to preprocess data and split into train and test sets
 def preprocess_data_and_split(X, y, test_size=0.2, random_state=42):
     # Split data into train and test sets
@@ -24,6 +50,24 @@ def preprocess_data_and_split(X, y, test_size=0.2, random_state=42):
     sp_id_test_tensor = torch.tensor([sp_id_mapping_test[id_] for id_ in X_test['sp_id']], dtype=torch.long)
 
     return X_train_tensor, X_test_tensor, y_train_tensor, y_test_tensor, sp_id_train_tensor, sp_id_test_tensor
+
+# Function to evaluate the model on the test set and calculate R-squared score
+def evaluate_model(model, test_loader):
+    model.eval()
+    with torch.no_grad():
+        total_loss = 0
+        targets_all = []
+        outputs_all = []
+        for inputs, targets, ids in test_loader:
+            inputs, targets, ids = inputs.to(device), targets.to(device), ids.to(device)
+            outputs = model(inputs, ids)
+            total_loss += criterion(outputs, targets.view(-1, 1)).item()
+            targets_all.extend(targets.cpu().numpy())
+            outputs_all.extend(outputs.cpu().numpy())
+
+        mse = total_loss / len(test_loader)
+        r2 = r2_score(targets_all, outputs_all)
+    return mse, r2
 
 # Main function
 def main(X, y, hidden_size, embedding_size, num_epochs, batch_size, test_size=0.2, random_state=42):
@@ -64,7 +108,23 @@ def main(X, y, hidden_size, embedding_size, num_epochs, batch_size, test_size=0.
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
     # Train the model
-    train_model(model, train_loader, criterion, optimizer, num_epochs)
+    for epoch in range(num_epochs):
+        model.train()
+        for inputs, targets, ids in train_loader:
+            inputs, targets, ids = inputs.to(device), targets.to(device), ids.to(device)
+
+            # Forward pass
+            outputs = model(inputs, ids)
+
+            # Compute loss
+            loss = criterion(outputs, targets.view(-1, 1))
+
+            # Backward and optimize
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+        print(f'Epoch [{epoch+1}/{num_epochs}], Loss: {loss.item():.4f}')
 
     # Create DataLoader for testing
     test_dataset = TensorDataset(X_test_tensor, y_test_tensor, sp_id_test_tensor)
