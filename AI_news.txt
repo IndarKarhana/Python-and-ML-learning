@@ -4,6 +4,9 @@ Researchers developed a method to model the bounded rationality of human or AI a
 The RAG Effect: AI's Relevance and Accuracy Surge - https://www.forbes.com/sites/forbesbusinesscouncil/2024/04/24/the-rag-effect-how-ai-is-becoming-more-relevant-and-accurate/?sh=75bb024f1f94
 AI's evolution brings powerful language models, but struggles with domain knowledge and real-time data. Retrieval Augmented Generation (RAG) integrates proprietary and internet data, transforming how organizations utilize information. RAG's combination of retriever and generator enhances accuracy, mitigates biases, tailors responses, and adapts to live data, revolutionizing AI applications across industries.
 
+Mixed Results in Gen AI Experiment for Small Businesses' Growth - https://newsroom.haas.berkeley.edu/research/gen-ai-experiment-shows-mixed-results-in-helping-small-businesses-grow/
+Generative AI aids high performers but hinders struggling entrepreneurs in Kenya study. Successful ones gain 15% boost, while low performers face 8% revenue drop. Task selection crucial: simpler tasks benefit, complex tasks worsen. Research highlights potential impact variation based on tasks chosen for AI assistance.
+
 Weighing Risks and Benefits of Personalizing LLMs - https://techxplore.com/news/2024-04-personalization-potential-democratize-llms.html
 Personalizing large language models could democratize whose views shape the AI by increasing inclusivity. Potential benefits include formatting tailored to user preferences and greater productivity. However, risks highlighted by researchers include privacy violations, over-attachment, worsening digital divides, societal polarization into echo chambers, and enabling sophisticated disinformation campaigns. They urge proactively addressing these potential downsides as personalization capabilities rapidly develop.
 
