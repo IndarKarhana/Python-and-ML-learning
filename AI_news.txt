@@ -19,63 +19,35 @@ AI analyzes discards at eateries and stores, helping adjust inventory and portio
 Secure Machine Learning Chip Safeguards User Data on Smartphones - https://news.mit.edu/2024/tiny-chip-safeguards-user-data-while-enabling-efficient-computing-0423
 MIT researchers created a machine learning accelerator chip resistant to hacking attacks, allowing large AI models to run securely on smartphones. It protects sensitive user data like health records with minimal impact on computation accuracy and efficiency. The chip enables privacy-preserving yet powerful mobile AI applications like health monitoring and augmented reality.
 
-import pandas as pd
-import plotly.graph_objects as go
-from ipywidgets import interact, widgets
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.preprocessing import StandardScaler
+import numpy as np
 
 # Sample data
-data = {
-    'sp_id': ['A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'C', 'C', 'C', 'C', 'C', 'D', 'D', 'D', 'D', 'D'],
-    'usg': [10, 12, 15, 17, 20, 11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 31, 32, 33, 34, 35],
-    'day': [1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5]
-}
-df_main = pd.DataFrame(data)
+X = ...  # Your data matrix with 5000 rows and 730 columns
+ids = ...  # Your IDs
 
-# Create an interactive plot
-def plot_usg(df, selected_sp_ids, selected_days):
-    fig = go.Figure()
-    for sp_id in selected_sp_ids:
-        df_sp = df[(df['sp_id'] == sp_id) & (df['day'].between(selected_days[0], selected_days[1]))]
-        if sp_id == 'A':
-            mean_A = df_sp['usg'].mean()
-            std_A = df_sp['usg'].std()
-            df_sp['usg'] = (df_sp['usg'] - mean_A) / std_A
-            sp_id = 'A_normalized'
-        elif sp_id == 'B':
-            mean_B = df_sp['usg'].mean()
-            std_B = df_sp['usg'].std()
-        elif sp_id == 'A_normalized':
-            df_sp['usg'] = df_sp['usg'] * std_B + mean_B
-        fig.add_trace(go.Scatter(x=df_sp['day'], y=df_sp['usg'], mode='lines', name=sp_id))
-    
-    fig.update_layout(title='Usage by sp_id',
-                      xaxis_title='Day',
-                      yaxis_title='Usage')
+# Normalize features
+scaler = StandardScaler()
+X_normalized = scaler.fit_transform(X)
 
-    fig.show()
+# Define feature weights (higher weights for higher columns)
+weights = np.arange(1, 731)  # Example: weights increase linearly with column number
 
-# Create interactive widgets for selecting sp_id and day range
-sp_id_widget = widgets.SelectMultiple(
-    options=['A', 'B'],
-    value=['A', 'B'],
-    description='sp_id:',
-    disabled=False
-)
+# Initialize KNN model with weighted distances
+knn = KNeighborsRegressor(n_neighbors=5, weights='distance', metric='wminkowski', metric_params={'w': weights})
 
-day_range_widget = widgets.IntRangeSlider(
-    value=[1, 5],
-    min=1,
-    max=5,
-    step=1,
-    description='Day Range:',
-    disabled=False,
-    continuous_update=False,
-    orientation='horizontal',
-    readout=True,
-    readout_format='d'
-)
+# Fit the model
+knn.fit(X_normalized, ids)
 
-# Create interactive plot
-interact(plot_usg, df=widgets.fixed(df_main), selected_sp_ids=sp_id_widget, selected_days=day_range_widget)
+# Example query
+query_data = ...  # Your query data point with 730 features
+query_data_normalized = scaler.transform([query_data])  # Normalize query data
+
+# Predict nearest neighbors
+nearest_neighbors = knn.kneighbors(query_data_normalized, return_distance=False)
+
+# Print IDs of nearest neighbors
+print("Nearest neighbors IDs:", ids[nearest_neighbors])
 
 
