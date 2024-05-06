@@ -36,6 +36,16 @@ def plot_usg(df, selected_sp_ids, selected_days):
     fig = go.Figure()
     for sp_id in selected_sp_ids:
         df_sp = df[(df['sp_id'] == sp_id) & (df['day'].between(selected_days[0], selected_days[1]))]
+        if sp_id == 'A':
+            mean_A = df_sp['usg'].mean()
+            std_A = df_sp['usg'].std()
+            df_sp['usg'] = (df_sp['usg'] - mean_A) / std_A
+            sp_id = 'A_normalized'
+        elif sp_id == 'B':
+            mean_B = df_sp['usg'].mean()
+            std_B = df_sp['usg'].std()
+        elif sp_id == 'A_normalized':
+            df_sp['usg'] = df_sp['usg'] * std_B + mean_B
         fig.add_trace(go.Scatter(x=df_sp['day'], y=df_sp['usg'], mode='lines', name=sp_id))
     
     fig.update_layout(title='Usage by sp_id',
@@ -46,8 +56,8 @@ def plot_usg(df, selected_sp_ids, selected_days):
 
 # Create interactive widgets for selecting sp_id and day range
 sp_id_widget = widgets.SelectMultiple(
-    options=df_main['sp_id'].unique(),
-    value=['A', 'B', 'C', 'D'],
+    options=['A', 'B'],
+    value=['A', 'B'],
     description='sp_id:',
     disabled=False
 )
