@@ -19,13 +19,14 @@ AI analyzes discards at eateries and stores, helping adjust inventory and portio
 Secure Machine Learning Chip Safeguards User Data on Smartphones - https://news.mit.edu/2024/tiny-chip-safeguards-user-data-while-enabling-efficient-computing-0423
 MIT researchers created a machine learning accelerator chip resistant to hacking attacks, allowing large AI models to run securely on smartphones. It protects sensitive user data like health records with minimal impact on computation accuracy and efficiency. The chip enables privacy-preserving yet powerful mobile AI applications like health monitoring and augmented reality.
 
-from sklearn.neighbors import KNeighborsRegressor
+from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
 import numpy as np
+import pandas as pd
 
-# Sample data
-X = ...  # Your data matrix with 5000 rows and 730 columns
-ids = ...  # Your IDs
+# Sample data (replace this with your actual DataFrame)
+X = np.random.rand(5000, 730)
+df = pd.DataFrame(X)
 
 # Normalize features
 scaler = StandardScaler()
@@ -35,19 +36,25 @@ X_normalized = scaler.fit_transform(X)
 weights = np.arange(1, 731)  # Example: weights increase linearly with column number
 
 # Initialize KNN model with weighted distances
-knn = KNeighborsRegressor(n_neighbors=5, weights='distance', metric='wminkowski', metric_params={'w': weights})
+knn = NearestNeighbors(n_neighbors=4, algorithm='brute', metric='wminkowski', metric_params={'w': weights})
 
 # Fit the model
-knn.fit(X_normalized, ids)
+knn.fit(X_normalized)
 
 # Example query
-query_data = ...  # Your query data point with 730 features
-query_data_normalized = scaler.transform([query_data])  # Normalize query data
+query_data = np.random.rand(1, 730)  # Your query data point with 730 features
+query_data_normalized = scaler.transform(query_data)  # Normalize query data
 
-# Predict nearest neighbors
-nearest_neighbors = knn.kneighbors(query_data_normalized, return_distance=False)
+# Find nearest neighbors and their distances
+distances, indices = knn.kneighbors(query_data_normalized)
 
-# Print IDs of nearest neighbors
-print("Nearest neighbors IDs:", ids[nearest_neighbors])
+# Remove the first index (query point itself) from indices and distances
+indices = indices[0][1:]
+distances = distances[0][1:]
+
+# Print IDs and distances of nearest neighbors
+print("Nearest neighbors IDs:")
+for idx, dist in zip(indices, distances):
+    print(f"ID: {df.index[idx]}, Distance: {dist}")
 
 
