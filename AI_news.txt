@@ -10,8 +10,8 @@ As artificial intelligence progresses, the dialogue surrounding AI and creativit
 Enhancing AI and Image Processing Security through Verification Techniques - https://techxplore.com/news/2024-04-verification-techniques-ai-image.html
 Researchers have developed a novel framework that improves the efficiency and practicality of verifiable computing, enabling unforgeable guarantees of correct data processing. The modular approach combines the performance advantages of custom solutions with the versatility of general-purpose proof systems. It demonstrates practical applications in artificial intelligence and image processing, enhancing integrity, fairness, and privacy in outsourced data processing tasks.
 
-California Faces Huge Grid Overhaul for Coming EV Demand - https://www.pnas.org/doi/10.1073/pnas.2317599121
-A study analyzed California's power grid capacity against projected electric vehicle (EV) demand, revealing the state needs massive upgrades. To meet the ban on new gas cars by 2035, California must increase overall grid capacity by 25%, potentially costing $20 billion. Around 67% of distribution circuits require upgrades by 2045. Residential areas need double the power increase compared to commercial zones. The analysis highlights the substantial grid overhaul required globally to transition to EVs.
+AI Boosts Wind Power Revenue, Shrinks Land Use - https://techxplore.com/news/2024-05-lab-ai-results-revenue-decreased.html
+Researchers from the U.S. Department of Energy's National Renewable Energy Laboratory (NREL) propose using AI to optimize wind plant designs, aiming to enhance revenue and reduce land use. Their AI model, WPGNN, trained on vast simulations, identifies optimal layouts and operations, particularly focusing on wake steering strategies. Results show potential land savings of up to 60%, equivalent to 28% of the U.S. wind energy footprint, along with consistent cost reductions. High-performance computing resources facilitated this groundbreaking research.
 
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
