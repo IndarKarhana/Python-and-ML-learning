@@ -1,54 +1,19 @@
-Computer Vision Researcher Develops Privacy Software for Surveillance Videos - https://www.ucf.edu/news/computer-vision-researcher-develops-privacy-software-for-surveillance-videos/
-Computer vision accelerates surveillance analysis, posing privacy concerns. UCF researchers develop software funded by NSF ART to obscure faces and details in real time. Targeting edge devices, emphasis on speed and efficiency. Work expands CRCV's efforts, addressing privacy in surveillance while enhancing society's navigation through computer vision.
+Is Gen AI Ready for the Enterprise? Separating the Hype from the Business Value - https://news.sap.com/africa/2024/05/is-gen-ai-ready-for-the-enterprise-separating-the-hype-from-the-business-value/
+Generative Artificial Intelligence (GenAI) attracts massive investment, projected to hit $200 billion by 2025. While hailed for revolutionizing business, doubts arise about its enterprise readiness. Despite its roots in established AI, concerns persist over privacy, security, and accuracy. To ensure reliability, businesses must navigate these challenges and leverage robust datasets.
 
-AI to Autonomously Design New Drugs Soon - https://www.cnbc.com/2024/05/05/within-a-few-years-generative-ai-will-design-new-drugs-on-its-own.html
-Major pharmaceutical companies use generative AI to rapidly design new drug molecules at unprecedented scale. AI generates as many designs in minutes as traditional labs in a year. Surprisingly, some AI-generated "weird" molecular structures showed potential as drugs, opening new creative pathways. Executives believe AI will autonomously generate new medicines soon, reshaping drug discovery and scientific methods. A pivotal moment was when AI could predict protein structures from amino acids, key for drug development.
+Understanding turbulence through artificial intelligence - https://techxplore.com/news/2024-05-turbulence-artificial-intelligence.html
+Turbulence, often associated with bumpy airplane rides, affects fluids like air and water in various scenarios, impacting energy use and CO2 emissions. Research scientists introduce a groundbreaking method, using artificial intelligence to understand turbulence and offering insights beyond traditional approaches. This approach, validated experimentally, marks a significant step forward in fluid mechanics research.
 
-Generative AI: Unleashing or Undermining Human Creativity? - https://news.uga.edu/generative-ai-and-creativity/
-As artificial intelligence progresses, the dialogue surrounding AI and creativity grows nuanced. Is creativity something computable, innate, or a blend? Research ties creativity to memory, proposing that semantic memory, our repository of foundational knowledge, fuels imagination. AI tools also boast semantic memory, raising questions about their impact on creativity. Despite AI's role in creative tasks, maintaining human creativity remains essential.
+AI Chatbots: Friend or Confirmation Bias Machine? - https://techxplore.com/news/2024-05-chatbots-people.html
+Chatbots may not be neutral! They can confirm your existing views on hot-button topics by giving limited info that matches your starting point. This can make us more entrenched in our opinions and less open to new ideas. Researchers are looking for ways to address this "echo chamber" effect. 
 
-Enhancing AI and Image Processing Security through Verification Techniques - https://techxplore.com/news/2024-04-verification-techniques-ai-image.html
-Researchers have developed a novel framework that improves the efficiency and practicality of verifiable computing, enabling unforgeable guarantees of correct data processing. The modular approach combines the performance advantages of custom solutions with the versatility of general-purpose proof systems. It demonstrates practical applications in artificial intelligence and image processing, enhancing integrity, fairness, and privacy in outsourced data processing tasks.
+Generative AI that imitates human motion - https://www.sciencedaily.com/releases/2024/05/240509110822.htm
+Researchers have tackled the challenge of replicating walking and running in robots using central pattern generators and deep reinforcement learning. This method mimics natural movements, fills gaps in motion data, facilitates smooth transitions, and adapts to varied surfaces, promising advancements in robotic locomotion.
 
-AI Boosts Wind Power Revenue, Shrinks Land Use - https://techxplore.com/news/2024-05-lab-ai-results-revenue-decreased.html
-Researchers from the U.S. Department of Energy's National Renewable Energy Laboratory (NREL) propose using AI to optimize wind plant designs, aiming to enhance revenue and reduce land use. Their AI model, WPGNN, trained on vast simulations, identifies optimal layouts and operations, particularly focusing on wake steering strategies. Results show potential land savings of up to 60%, equivalent to 28% of the U.S. wind energy footprint, along with consistent cost reductions. High-performance computing resources facilitated this groundbreaking research.
+Natural language boosts LLM performance in coding, planning, and robotics - https://news.mit.edu/2024/natural-language-boosts-llm-performance-coding-planning-robotics-0501
+Researchers at MIT's CSAIL have developed innovative methods to address challenges in robotics and AI. Using natural language, they've enhanced capabilities in programming, AI task planning, and robotic navigation. Their neurosymbolic frameworks, LILO, Ada, and LGA, promise advancements in complex problem-solving and environment adaptation, marking significant progress in AI research.
 
-from sklearn.neighbors import NearestNeighbors
-from sklearn.preprocessing import StandardScaler
-import numpy as np
-import pandas as pd
-
-# Sample data (replace this with your actual DataFrame)
-X = np.random.rand(5000, 730)
-df = pd.DataFrame(X)
-
-# Normalize features
-scaler = StandardScaler()
-X_normalized = scaler.fit_transform(X)
-
-# Define feature weights (higher weights for higher columns)
-weights = np.arange(1, 731)  # Example: weights increase linearly with column number
-
-# Initialize KNN model with weighted distances
-knn = NearestNeighbors(n_neighbors=4, algorithm='brute', metric='wminkowski', metric_params={'w': weights})
-
-# Fit the model
-knn.fit(X_normalized)
-
-# Example query
-query_data = np.random.rand(1, 730)  # Your query data point with 730 features
-query_data_normalized = scaler.transform(query_data)  # Normalize query data
-
-# Find nearest neighbors and their distances
-distances, indices = knn.kneighbors(query_data_normalized)
-
-# Remove the first index (query point itself) from indices and distances
-indices = indices[0][1:]
-distances = distances[0][1:]
-
-# Print IDs and distances of nearest neighbors
-print("Nearest neighbors IDs:")
-for idx, dist in zip(indices, distances):
-    print(f"ID: {df.index[idx]}, Distance: {dist}")
+Tech Giants Strive for Clean Energy Amid AI Boom - https://www.geekwire.com/2024/as-ai-use-surges-tech-companies-race-to-secure-clean-energy-and-preserve-climate-goals/
+As AI grows, big tech firms build more data centers, driving up energy use. Despite green goals, they struggle to match rising demand. Investments in renewables help, but challenges remain in finding clean energy sources. Meanwhile, AI could help solve these energy issues while also intensifying them.
 
 
