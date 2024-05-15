@@ -10,10 +10,6 @@ Chatbots may not be neutral! They can confirm your existing views on hot-button 
 Generative AI that imitates human motion - https://www.sciencedaily.com/releases/2024/05/240509110822.htm
 Researchers have tackled the challenge of replicating walking and running in robots using central pattern generators and deep reinforcement learning. This method mimics natural movements, fills gaps in motion data, facilitates smooth transitions, and adapts to varied surfaces, promising advancements in robotic locomotion.
 
-Natural language boosts LLM performance in coding, planning, and robotics - https://news.mit.edu/2024/natural-language-boosts-llm-performance-coding-planning-robotics-0501
-Researchers at MIT's CSAIL have developed innovative methods to address challenges in robotics and AI. Using natural language, they've enhanced capabilities in programming, AI task planning, and robotic navigation. Their neurosymbolic frameworks, LILO, Ada, and LGA, promise advancements in complex problem-solving and environment adaptation, marking significant progress in AI research.
-
-Tech Giants Strive for Clean Energy Amid AI Boom - https://www.geekwire.com/2024/as-ai-use-surges-tech-companies-race-to-secure-clean-energy-and-preserve-climate-goals/
-As AI grows, big tech firms build more data centers, driving up energy use. Despite green goals, they struggle to match rising demand. Investments in renewables help, but challenges remain in finding clean energy sources. Meanwhile, AI could help solve these energy issues while also intensifying them.
-
+Chip Manufacturing: Tech Trends and Trade Dynamics - https://www.technologyreview.com/2024/05/13/1092319/whats-next-in-chips/#:~:text=Thanks%20to%20the%20boom%20in,models%20without%20disclosing%20private%20data.
+As AI continues its surge, chip technology is on the brink of a major change. There's a growing need for chips that can train AI models faster and run them on devices like smartphones and satellites without sharing private data. Governments and tech giants are investing heavily in chip manufacturing, reshaping global supply chains. Additionally, there's a shift towards edge computing for AI, enabling faster and more private processing directly on devices.
 
