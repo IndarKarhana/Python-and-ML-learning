@@ -13,3 +13,6 @@ Voice technology, such as virtual assistants, can enhance efficiency, but errors
 Game Theory Strategies for Language Model Reliability - https://news.mit.edu/2024/consensus-game-elevates-ai-text-comprehension-generation-skills-0514
 MIT researchers have developed a "consensus game" inspired by cryptic communication games to enhance AI's understanding and generation of text. By treating AI interaction as a game where parts cooperate under specific rules, they significantly improve text generation across tasks like reading comprehension and dialogue. This innovative approach bridges disparities in existing methods and shows promise for future language models.
 
+Hong Kong Firm Loses $25M to Deepfake CFO Video Call Scam - https://www.wionews.com/technology/hong-kong-office-employee-loses-more-than-25-million-after-video-call-with-deepfake-chief-financial-officer-686908
+Scammers used deepfake technology to impersonate a multinational company's CFO in a video call, leading to a $25.6 million loss for its Hong Kong branch. The employee, initially suspicious, was convinced by the realistic deepfakes of colleagues and made multiple transfers before realizing the deception.
+
