@@ -32,15 +32,17 @@ percentiles = filtered_data.groupby('sp_id_x')['usg_dly_bl_tmpp'].quantile([0.10
 # Filter the data within the 10th to 95th percentile range for each sp_id_x
 filtered_data = filtered_data[filtered_data.apply(lambda row: percentiles.loc[row['sp_id_x'], 0.10] <= row['usg_dly_bl_tmpp'] <= percentiles.loc[row['sp_id_x'], 0.95], axis=1)]
 
-# Calculate mean and standard deviation of usg_dly_bl_tmpp for the filtered data
-stats = filtered_data.groupby('sp_id_x')['usg_dly_bl_tmpp'].agg(['mean', 'std']).reset_index()
-stats.rename(columns={'mean': 'mean_filtered', 'std': 'std_filtered'}, inplace=True)
+# Calculate min and max of usg_dly_bl_tmpp for the filtered data
+stats = filtered_data.groupby('sp_id_x')['usg_dly_bl_tmpp'].agg(['min', 'max']).reset_index()
+stats.rename(columns={'min': 'min_filtered', 'max': 'max_filtered'}, inplace=True)
 
 # Merge the stats back to the original dataframe
 data = data.merge(stats, on='sp_id_x')
 
-# Normalize the usg_n1 column and store it in a new column
-data['usg_n1_norm'] = data.groupby('sp_id_x')['usg_n1'].transform(lambda x: (x - x.mean()) / x.std())
+# Min-max normalize the usg_n1 column and store it in a new column
+data['usg_n1_min_max'] = data.groupby('sp_id_x')['usg_n1'].transform(lambda x: (x - x.min()) / (x.max() - x.min() + 0.0001))
 
-# Denormalize usg_n1_norm using the calculated mean and std from the filtered data
-data['usg_n1_denorm'] = data['usg_n1_norm'] * data['std_filtered'] + data['mean_filtered']
+# Denormalize usg_n1_min_max using the calculated min and max from the filtered data
+data['usg_n1_denorm'] = data['usg_n1_min_max'] * (data['max_filtered'] - data['min_filtered']) + data['min_filtered']
+
+
