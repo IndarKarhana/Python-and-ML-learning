@@ -23,10 +23,10 @@ def calc_stats(group):
     filtered = group[(group['usg_dly_bl_tmpp'] >= low) & (group['usg_dly_bl_tmpp'] <= high)]
     mean = filtered['usg_dly_bl_tmpp'].mean()
     std = filtered['usg_dly_bl_tmpp'].std()
-    return pd.Series({'mean': mean, 'std': std})
+    return pd.Series({'mean_filtered': mean, 'std_filtered': std})
 
 # Apply the function to each group
-stats = data.groupby('sp_id_x').apply(calc_stats)
+stats = data.groupby('sp_id_x').apply(calc_stats).reset_index()
 
 # Merge the stats back to the original dataframe
 data = data.merge(stats, on='sp_id_x')
@@ -35,4 +35,4 @@ data = data.merge(stats, on='sp_id_x')
 data['usg_n1_norm'] = data.groupby('sp_id_x')['usg_n1'].transform(lambda x: (x - x.mean()) / x.std())
 
 # Denormalize usg_n1 using the calculated mean and std
-data['usg_n1_denorm'] = data['usg_n1_norm'] * data['std'] + data['mean']
+data['usg_n1_denorm'] = data['usg_n1_norm'] * data['std_filtered'] + data['mean_filtered']
