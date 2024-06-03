@@ -34,9 +34,10 @@ filtered_data = filtered_data[filtered_data.apply(lambda row: percentiles.loc[ro
 
 # Calculate mean and standard deviation of usg_dly_bl_tmpp for the filtered data
 stats = filtered_data.groupby('sp_id_x')['usg_dly_bl_tmpp'].agg(['mean', 'std']).reset_index()
+stats.rename(columns={'mean': 'mean_filtered', 'std': 'std_filtered'}, inplace=True)
 
 # Merge the stats back to the original dataframe
-data = data.merge(stats, on='sp_id_x', suffixes=('', '_filtered'))
+data = data.merge(stats, on='sp_id_x')
 
 # Normalize the usg_n1 column and store it in a new column
 data['usg_n1_norm'] = data.groupby('sp_id_x')['usg_n1'].transform(lambda x: (x - x.mean()) / x.std())
