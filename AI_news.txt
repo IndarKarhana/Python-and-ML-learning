@@ -16,22 +16,23 @@ Researchers developed an AI method to pinpoint specific actions in long instruct
 Researchers analyze the characteristics of AI-generated deep fakes - https://techxplore.com/news/2024-05-characteristics-ai-generated-deepfakes.html
 Research shows most AI-generated deepfakes on social media involve political figures and artists, often linked to news cycles. These deepfakes pose significant threats, especially during elections or conflicts. The study recommends media literacy, reverse image searches, and legislation for AI content identification to combat misinformation.
 
-data = pd.DataFrame(data)
+# Define a function to calculate mean and std for the 10th to 95th percentile range
+def calc_stats(group):
+    low = group['usg_dly_bl_tmpp'].quantile(0.10)
+    high = group['usg_dly_bl_tmpp'].quantile(0.95)
+    filtered = group[(group['usg_dly_bl_tmpp'] >= low) & (group['usg_dly_bl_tmpp'] <= high)]
+    mean = filtered['usg_dly_bl_tmpp'].mean()
+    std = filtered['usg_dly_bl_tmpp'].std()
+    return pd.Series({'mean': mean, 'std': std})
 
-# Calculate the 10th and 95th percentiles for usg_dly_bl_tmpp for each sp_id_x
-percentiles = data.groupby('sp_id_x')['usg_dly_bl_tmpp'].quantile([0.10, 0.95]).unstack()
-
-# Filter the data within the 10th to 95th percentile range for each sp_id_x
-filtered_data = data[data.apply(lambda row: percentiles.loc[row['sp_id_x'], 0.10] <= row['usg_dly_bl_tmpp'] <= percentiles.loc[row['sp_id_x'], 0.95], axis=1)]
-
-# Calculate mean and standard deviation of usg_dly_bl_tmpp for the filtered data
-stats = filtered_data.groupby('sp_id_x')['usg_dly_bl_tmpp'].agg(['mean', 'std']).reset_index()
+# Apply the function to each group
+stats = data.groupby('sp_id_x').apply(calc_stats)
 
 # Merge the stats back to the original dataframe
-data = data.merge(stats, on='sp_id_x', suffixes=('', '_filtered'))
+data = data.merge(stats, on='sp_id_x')
 
-# Normalize the usg_n1 column and store it in a new column
+# Normalize the usg_n1 column
 data['usg_n1_norm'] = data.groupby('sp_id_x')['usg_n1'].transform(lambda x: (x - x.mean()) / x.std())
 
-# Denormalize usg_n1_norm using the calculated mean and std from the filtered data
-data['usg_n1_denorm'] = data['usg_n1_norm'] * data['std_filtered'] + data['mean_filtered']
+# Denormalize usg_n1 using the calculated mean and std
+data['usg_n1_denorm'] = data['usg_n1_norm'] * data['std'] + data['mean']
