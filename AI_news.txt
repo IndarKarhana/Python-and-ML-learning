@@ -1,20 +1,20 @@
-AI Set to Revolutionize Concierge Services - https://news.osu.edu/ai-poised-to-usher-in-new-level-of-concierge-services-to-the-public/
-A new paper highlights AI's potential to transform concierge services, enhancing customer interaction in hotels and other sectors. Researchers envision AI concierges using natural language processing, behavioural data, and predictive analytics to anticipate needs, suggest actions, and automate tasks. Despite challenges, AI could offer 24/7 availability, consistency, and tailored experiences, revolutionizing customer service.
+Multitasking Robots: AI Trains Them on Mixed Data - https://news.mit.edu/2024/technique-for-more-effective-multipurpose-robots-0603
+Researchers at MIT developed a technique called Policy Composition (PoCo) to train multipurpose robots. By combining data from diverse sources using generative AI diffusion models, they achieved a 20% improvement in task performance. This approach allows robots to adapt to new tasks and environments, even those not seen during training.
 
-AI-generated empathy has its limits - https://news.cornell.edu/stories/2024/05/ai-generated-empathy-has-its-limits
-Conversational agents (CAs) like Alexa and Siri, powered by large language models (LLMs), can display empathy but often inherit human biases from their training data. Researchers found that CAs make biased value judgments and struggle with complex empathy compared to humans. Despite potential benefits, mitigating these biases is crucial for ethical AI deployment.
+Evaluating language models for mathematics through interactions - https://www.pnas.org/doi/10.1073/pnas.2318124121
+Researchers from the University of Cambridge created CheckMate, an open-source evaluation platform for large language models (LLMs). In an experiment, participants used LLMs like InstructGPT, ChatGPT, and GPT-4 to solve math problems. While correctness correlated with perceived helpfulness, some incorrect LLM outputs were still useful. The study emphasizes verifying LLM results due to their limitations, which could inform AI literacy training and improve LLMs for broader applications.
 
-Bio-inspired cameras and AI help drivers detect pedestrians and obstacles faster - https://techxplore.com/news/2024-05-bio-cameras-ai-drivers-pedestrians.html
-Researchers developed an AI-based system using a bio-inspired camera, achieving 100 times faster detection of pedestrians and obstacles than current automotive cameras. This hybrid system combines standard and event cameras, improving safety for self-driving cars by detecting objects quickly and using less computational power without compromising accuracy.
+Machine Learning Detects Defects in 3D Printing - https://techxplore.com/news/2024-06-machine-defects-additive.html
+University of Illinois Urbana-Champaign researchers have developed an innovative method for identifying defects in additively manufactured components. They used deep machine learning, leveraging computer simulations to generate synthetic defects and train their model. The algorithm successfully detected previously unseen defects in real physical parts, addressing a significant challenge in additive manufacturing1.
 
-Controlled Diffusion Model Alters Material Properties in Images - https://news.mit.edu/2024/controlled-diffusion-model-can-change-material-properties-images-0528
-MIT CSAIL and Google Research researchers developed "Alchemist," a diffusion model that alters material properties in images, such as roughness, metallicity, albedo, and transparency. Alchemist uses a slider-based interface for precise control over these attributes, improving photo editing, video game models, visual effects, and robotic training data. Despite some limitations, it offers significant advancements in AI-driven image manipulation.
+Predictive physics model helps robots grasp the unpredictable - https://groups.csail.mit.edu/rrg/papers/noseworthy_shaw_icra24.pdf
+MIT researchers have developed the Grasping Neural Process, a predictive physics model for intelligent robotic grasping. Unlike previous models, it infers hidden physical properties from attempted grasps, using less data and completing computations in milliseconds. The system excels in unstructured environments and shows promise for real-world applications.
 
-AI Method Accurately Identifies Actions in Videos - https://news.mit.edu/2024/ai-based-method-can-find-specific-video-action-0529
-Researchers developed an AI method to pinpoint specific actions in long instructional videos using only videos and transcripts, avoiding costly hand-labelled data. This model distinguishes spatial and temporal details, enhancing accuracy in identifying actions and human-object interactions, benefiting online learning, virtual training, and healthcare settings.
+AI saving humans from the emotional toll of monitoring hate speech - https://uwaterloo.ca/news/media/ai-saving-humans-emotional-toll-monitoring-hate-speech
+University of Waterloo researchers have developed the Multi-Modal Discussion Transformer (mDT), a machine-learning method that detects hate speech on social media platforms with 88% accuracy. Unlike previous models, mDT considers both text and images, reducing false positives. Understanding context aims to create safer online spaces.
 
-Researchers analyze the characteristics of AI-generated deep fakes - https://techxplore.com/news/2024-05-characteristics-ai-generated-deepfakes.html
-Research shows most AI-generated deepfakes on social media involve political figures and artists, often linked to news cycles. These deepfakes pose significant threats, especially during elections or conflicts. The study recommends media literacy, reverse image searches, and legislation for AI content identification to combat misinformation.
+Children's visual experience may hold the key to better computer vision training - https://www.psu.edu/news/research/story/childrens-visual-experience-may-hold-key-better-computer-vision-training/
+A new novel machine learning approach has been developed inspired by children’s visual learning. Their contrastive learning algorithm, which considers spatial position, trains AI visual systems more efficiently. By detecting positive pairs regardless of camera position or lighting changes, the method outperformed base models by up to 14.99%. The approach has implications for exploring extreme environments and distant worlds.
 
 # Convert usg_dt column to datetime type
 data['usg_dt'] = pd.to_datetime(data['usg_dt'])
