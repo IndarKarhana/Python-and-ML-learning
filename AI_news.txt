@@ -1,48 +1,19 @@
-Multitasking Robots: AI Trains Them on Mixed Data - https://news.mit.edu/2024/technique-for-more-effective-multipurpose-robots-0603
-Researchers at MIT developed a technique called Policy Composition (PoCo) to train multipurpose robots. By combining data from diverse sources using generative AI diffusion models, they achieved a 20% improvement in task performance. This approach allows robots to adapt to new tasks and environments, even those not seen during training.
+New Method Helps Robots Agree Quickly and Efficiently - https://techxplore.com/news/2024-06-protocol-finite-consensus-multi-agent.html
+Researchers developed a new protocol for multi-agent systems, ensuring finite-time consensus using a hyperbolic tangent function. This approach guarantees exact consensus for leaderless and leader-following agents, simplifies design and stability analysis, and has practical applications like autonomous drones and robotic arms, enhancing efficiency and reliability in real-world scenarios.
 
-Evaluating language models for mathematics through interactions - https://www.pnas.org/doi/10.1073/pnas.2318124121
-Researchers from the University of Cambridge created CheckMate, an open-source evaluation platform for large language models (LLMs). In an experiment, participants used LLMs like InstructGPT, ChatGPT, and GPT-4 to solve math problems. While correctness correlated with perceived helpfulness, some incorrect LLM outputs were still useful. The study emphasizes verifying LLM results due to their limitations, which could inform AI literacy training and improve LLMs for broader applications.
+New Ransomware Evades Security Using Advanced AI - https://techxplore.com/news/2024-06-ransomware-based-evolutional-generative-adversarial.html
+An advanced ransomware attack method has been developed using an Evolution Generative Adversarial Network (EGAN), which creates malware that evades many commercial anti-virus systems. This method combines evolutionary strategies with GANs to generate ransomware that remains functional while bypassing detection, posing a significant threat to current cybersecurity measures.
 
-Machine Learning Detects Defects in 3D Printing - https://techxplore.com/news/2024-06-machine-defects-additive.html
-University of Illinois Urbana-Champaign researchers have developed an innovative method for identifying defects in additively manufactured components. They used deep machine learning, leveraging computer simulations to generate synthetic defects and train their model. The algorithm successfully detected previously unseen defects in real physical parts, addressing a significant challenge in additive manufacturing1.
+Oil Industry Harnesses Generative AI for Efficiency and Safety - https://techxplore.com/news/2024-06-oil-gas-industry-generative-ai.html
+The oil and gas industry is adopting generative AI to enhance efficiency and safety, as well as reduce emissions. By analyzing vast data from drilling, AI-driven tools can predict maintenance needs, simulate operational scenarios, and assist workers with real-time diagnostics. These advancements aim to cut costs, lower risks, and expedite training, although they require significant energy to operate.
 
-Predictive physics model helps robots grasp the unpredictable - https://groups.csail.mit.edu/rrg/papers/noseworthy_shaw_icra24.pdf
-MIT researchers have developed the Grasping Neural Process, a predictive physics model for intelligent robotic grasping. Unlike previous models, it infers hidden physical properties from attempted grasps, using less data and completing computations in milliseconds. The system excels in unstructured environments and shows promise for real-world applications.
+New computer vision method helps speed up screening of electronic materials - https://news.mit.edu/2024/new-computer-vision-method-helps-speed-screening-electronic-materials-0611
+MIT engineers developed a computer vision technique that speeds up the characterization of new electronic materials 85 times faster than traditional methods. This innovation analyzes images to estimate key properties, enhancing the efficiency of material screening. The technique achieves over 96% accuracy and could revolutionize fields like solar energy and semiconductor technology.
 
-AI saving humans from the emotional toll of monitoring hate speech - https://uwaterloo.ca/news/media/ai-saving-humans-emotional-toll-monitoring-hate-speech
-University of Waterloo researchers have developed the Multi-Modal Discussion Transformer (mDT), a machine-learning method that detects hate speech on social media platforms with 88% accuracy. Unlike previous models, mDT considers both text and images, reducing false positives. Understanding context aims to create safer online spaces.
+Researchers harness AI for autonomous discovery and optimization of materials - https://www.ornl.gov/news/researchers-harness-ai-autonomous-discovery-and-optimization-materials
+Researchers at Oak Ridge National Laboratory developed an AI-driven tool that autonomously synthesizes materials, significantly speeding up the discovery process. Using pulsed laser deposition (PLD), the system creates and analyzes materials and then adjusts synthesis conditions for improved results. This innovation performs experiments ten times faster, efficiently navigating large parameter spaces with minimal samples.
 
-Children's visual experience may hold the key to better computer vision training - https://www.psu.edu/news/research/story/childrens-visual-experience-may-hold-key-better-computer-vision-training/
-A new novel machine learning approach has been developed inspired by children’s visual learning. Their contrastive learning algorithm, which considers spatial position, trains AI visual systems more efficiently. By detecting positive pairs regardless of camera position or lighting changes, the method outperformed base models by up to 14.99%. The approach has implications for exploring extreme environments and distant worlds.
-
-# Convert usg_dt column to datetime type
-data['usg_dt'] = pd.to_datetime(data['usg_dt'])
-
-# Get the date 4 months before the last date in the dataset
-end_date = data['usg_dt'].max()
-start_date = end_date - pd.DateOffset(months=4)
-
-# Filter the data to include only the last 4 months
-filtered_data = data[(data['usg_dt'] >= start_date) & (data['usg_dt'] <= end_date)]
-
-# Calculate the 10th and 95th percentiles for usg_dly_bl_tmpp for each sp_id_x
-percentiles = filtered_data.groupby('sp_id_x')['usg_dly_bl_tmpp'].quantile([0.10, 0.95]).unstack()
-
-# Filter the data within the 10th to 95th percentile range for each sp_id_x
-filtered_data = filtered_data[filtered_data.apply(lambda row: percentiles.loc[row['sp_id_x'], 0.10] <= row['usg_dly_bl_tmpp'] <= percentiles.loc[row['sp_id_x'], 0.95], axis=1)]
-
-# Calculate min and max of usg_dly_bl_tmpp for the filtered data
-stats = filtered_data.groupby('sp_id_x')['usg_dly_bl_tmpp'].agg(['min', 'max']).reset_index()
-stats.rename(columns={'min': 'min_filtered', 'max': 'max_filtered'}, inplace=True)
-
-# Merge the stats back to the original dataframe
-data = data.merge(stats, on='sp_id_x')
-
-# Min-max normalize the usg_n1 column and store it in a new column
-data['usg_n1_min_max'] = data.groupby('sp_id_x')['usg_n1'].transform(lambda x: (x - x.min()) / (x.max() - x.min() + 0.0001))
-
-# Denormalize usg_n1_min_max using the calculated min and max from the filtered data
-data['usg_n1_denorm'] = data['usg_n1_min_max'] * (data['max_filtered'] - data['min_filtered']) + data['min_filtered']
+Trash-Sorting Robot Mimics Complex Human Sense of Touch - https://publishing.aip.org/publications/latest-content/trash-sorting-robot-mimics-complex-human-sense-of-touch/
+Researchers from Tsinghua University developed a robotic tactile sensing method incorporating thermal sensations to improve object recognition. Their system, featuring a multi-layered sensor and a classification algorithm, achieved 98.85% accuracy in sorting diverse garbage items. This advancement could significantly reduce human labour and aid in developing smart technologies for various applications, including assisting individuals with hand disabilities.
 
 
